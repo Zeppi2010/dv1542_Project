@@ -13,7 +13,7 @@ float OBJParserD3D11::ParseFloat(const std::string& str, size_t& pos)
 	{
 		pos++;
 	}
-	return std::stoi(str.substr(start, pos - start));
+	return std::stof(str.substr(start, pos - start));
 }
 
 int OBJParserD3D11::ParseInt(const std::string& str, size_t& pos)
@@ -164,7 +164,7 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 	std::ifstream file(baseDirectory + objFilePath);
 	if (!file.is_open())
 	{
-		throw std::runtime_error("Kunde inte öppna OBJ-fil:" + objFilePath);
+		throw std::runtime_error("Could not open OBJ-file:" + objFilePath);
 
 	}
 
@@ -177,7 +177,7 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 		{
 			line.pop_back();
 		}
-		if (line.empty() && line.back() == '\r')
+		if (line.empty() || line[0] == '#')
 		{
 			continue;
 		}
@@ -210,7 +210,7 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 		else if (id == "usemtl")
 		{
 			FinilzeSubMesh(device, data);
-			ParseUseMtl(dataPart, data);
+			
 		}
 		else if (id == "mtllib")
 		{
@@ -221,7 +221,7 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 			}
 			catch (const std::exception& e)
 			{
-				std::runtime_error("Fel vid inläsning av MTL-fil: ");
+				std::runtime_error("Error during reading of MTL-file: ");
 			}
 
 		}
@@ -280,7 +280,7 @@ void OBJParserD3D11::ParseMTLFile(const std::string& mtlFilePath, ParseData& dat
 		std::string id = line.substr(0, spacePos);
 		std::string dataPart = line.substr(spacePos + 1);
 
-		if (id == "newmt1")
+		if (id == "newmtl")
 		{
 			if (hasCurrentMaterial)
 			{
