@@ -5,6 +5,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <cctype>
+#include <algorithm>
 
 
 #include <d3d11_4.h>  
@@ -22,7 +23,7 @@ private:
        std::string mapKd;  
        std::string mapKs;
        std::string mapKa;  
-       float shininess = 0;  
+       float shininess = 32;  
    };  
 
    struct ParseData  

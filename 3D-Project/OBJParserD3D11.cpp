@@ -109,17 +109,8 @@ void OBJParserD3D11::ParseFace(const std::string& line, ParseData& data)
 			DirectX::XMFLOAT2 uv = data.texCoords[uvIndex];
 			DirectX::XMFLOAT3 normal = data.normals[normalIndex];
 
-			uint32_t newIndex = static_cast<uint32_t>(data.vertexData.size() / 8);
-			data.vertexData.push_back(position.x);
-			data.vertexData.push_back(position.y);
-			data.vertexData.push_back(position.z);
-
-			data.vertexData.push_back(uv.x);
-			data.vertexData.push_back(uv.y);
-
-			data.vertexData.push_back(normal.x);
-			data.vertexData.push_back(normal.y);
-			data.vertexData.push_back(normal.z);
+			uint32_t newIndex = static_cast<uint32_t>(data.vertexData.size());
+			data.vertexData.push_back({ position, uv, normal });
 
 			data.uniqueVertices[vertexKey] = newIndex;
 			data.indexData.push_back(newIndex);
@@ -148,6 +139,9 @@ void OBJParserD3D11::FinalizeSubMesh(ID3D11Device* device,ParseData& data)
 		? GetOrLoadTexture(device, matIt->second.mapKd) : GetDefaultTexture(device);
 	info.specularTextureSRV = (matIt != data.materials.end())
 		? GetOrLoadTexture(device, matIt->second.mapKs) : GetDefaultTexture(device);
+	info.shininess = (matIt != data.materials.end())
+		? matIt->second.shininess : 32.0f;
+
 
 	data.subMeshes.push_back(info);
 	data.currentSubMeshStart = data.indexData.size();
@@ -155,10 +149,10 @@ void OBJParserD3D11::FinalizeSubMesh(ID3D11Device* device,ParseData& data)
 
 MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& objFilePath)
 {
-	auto chaced = loadedMeshes.find(objFilePath);
-	if (chaced != loadedMeshes.end())
+	auto cached = loadedMeshes.find(objFilePath);
+	if (cached != loadedMeshes.end())
 	{
-		return chaced->second;
+		return cached->second;
 	}
 
 	std::ifstream file(baseDirectory + objFilePath);
@@ -209,7 +203,7 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 		}
 		else if (id == "usemtl")
 		{
-			FinilzeSubMesh(device, data);
+			FinalizeSubMesh(device, data);
 			size_t namePos = 0;
 			data.currentMaterial = ParseString(dataPart, namePos);
 			
@@ -224,7 +218,8 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 			}
 			catch (const std::exception& e)
 			{
-				std::runtime_error("Error during reading of MTL-file: ");
+				std::string message = "Error while reading MTL file " + mtlFilePath + ": " + e.what() + "\n";
+				OutputDebugStringA(message.c_str());
 				
 			}
 
@@ -254,6 +249,8 @@ void OBJParserD3D11::ParseMTLFile(const std::string& mtlFilePath, ParseData& dat
 	std::ifstream file(mtlFilePath);
 	if (!file.is_open())
 	{
+		std::string message = "Could not open MTL file: " + mtlFilePath + "\n";
+		OutputDebugStringA(message.c_str());
 		return;
 	}
 
@@ -310,7 +307,7 @@ void OBJParserD3D11::ParseMTLFile(const std::string& mtlFilePath, ParseData& dat
 		else if (id == "Ns")
 		{
 			size_t pos = 0;
-			material.shininess = ParseFloat(dataPart, pos);
+			material.shininess = (std::max)(ParseFloat(dataPart, pos), 1.0f);
 		}
 
 

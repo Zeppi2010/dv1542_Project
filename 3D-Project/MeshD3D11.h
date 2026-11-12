@@ -27,10 +27,10 @@ struct MeshData
 	{
 		size_t startIndexValue;
 		size_t nrOfIndicesInSubMesh;
-		float shininess;
 		ID3D11ShaderResourceView* ambientTextureSRV;
 		ID3D11ShaderResourceView* diffuseTextureSRV;
 		ID3D11ShaderResourceView* specularTextureSRV;
+		float shininess = 32;
 	};
 
 	std::vector<SubMeshInfo> subMeshInfo;
@@ -60,4 +60,5 @@ public:
 	ID3D11ShaderResourceView* GetAmbientSRV(size_t subMeshIndex) const;
 	ID3D11ShaderResourceView* GetDiffuseSRV(size_t subMeshIndex) const;
 	ID3D11ShaderResourceView* GetSpecularSRV(size_t subMeshIndex) const;
+	float GetShininess(size_t subMeshIndex) const;
 };
