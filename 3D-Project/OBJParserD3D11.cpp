@@ -128,7 +128,7 @@ void OBJParserD3D11::ParseFace(const std::string& line, ParseData& data)
 	}
 }
 
-void OBJParserD3D11::FinilzeSubMesh(ID3D11Device* device,ParseData& data)
+void OBJParserD3D11::FinalizeSubMesh(ID3D11Device* device,ParseData& data)
 {
 	size_t count = data.indexData.size() - data.currentSubMeshStart;
 	if (count == 0)
@@ -210,11 +210,14 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 		else if (id == "usemtl")
 		{
 			FinilzeSubMesh(device, data);
+			size_t namePos = 0;
+			data.currentMaterial = ParseString(dataPart, namePos);
 			
 		}
 		else if (id == "mtllib")
 		{
-			std::string mtlFilePath = baseDirectory + ParseString(dataPart, spacePos);
+			size_t pathPos = 0;
+			std::string mtlFilePath = baseDirectory + ParseString(dataPart, pathPos);
 			try
 			{
 				ParseMTLFile(mtlFilePath, data);
@@ -222,13 +225,14 @@ MeshD3D11* OBJParserD3D11::LoadMesh(ID3D11Device* device, const std::string& obj
 			catch (const std::exception& e)
 			{
 				std::runtime_error("Error during reading of MTL-file: ");
+				
 			}
 
 		}
 
 	}
 
-	FinilzeSubMesh(device, data);
+	FinalizeSubMesh(device, data);
 
 	MeshData meshData;
 	meshData.vertexInfo.sizeOfVertex = sizeof(Vertex);

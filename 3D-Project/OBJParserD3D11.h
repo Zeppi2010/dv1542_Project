@@ -3,6 +3,8 @@
 #include <vector>  
 #include <unordered_map>  
 #include <fstream>
+#include <stdexcept>
+#include <cctype>
 
 
 #include <d3d11_4.h>  
@@ -58,7 +60,7 @@ private:
 
    void ParseMTLFile(const std::string& mtlFilePath, ParseData& data);
 
-   void FinilzeSubMesh(ID3D11Device* device, ParseData& data);
+   void FinalizeSubMesh(ID3D11Device* device, ParseData& data);
 
    ID3D11ShaderResourceView* GetOrLoadTexture(ID3D11Device* device, const std::string& texturePath);
 

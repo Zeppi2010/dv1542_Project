@@ -27,6 +27,7 @@ struct MeshData
 	{
 		size_t startIndexValue;
 		size_t nrOfIndicesInSubMesh;
+		float shininess;
 		ID3D11ShaderResourceView* ambientTextureSRV;
 		ID3D11ShaderResourceView* diffuseTextureSRV;
 		ID3D11ShaderResourceView* specularTextureSRV;
