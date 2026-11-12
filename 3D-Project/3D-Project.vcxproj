@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -133,6 +133,7 @@
     <ClInclude Include="IndexBufferD3D11.h" />
     <ClInclude Include="InputLayoutD3D11.h" />
     <ClInclude Include="MeshD3D11.h" />
+    <ClInclude Include="OBJParserD3D11.h" />
     <ClInclude Include="RenderTargetD3D11.h" />
     <ClInclude Include="SamplerD3D11.h" />
     <ClInclude Include="ShaderD3D11.h" />
@@ -140,7 +141,11 @@
     <ClInclude Include="SpotLightCollectionD3D11.h" />
     <ClInclude Include="StructuredBufferD3D11.h" />
     <ClInclude Include="SubMeshD3D11.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBufferD3D11.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OBJParserD3D11.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
