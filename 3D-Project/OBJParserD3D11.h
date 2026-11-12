@@ -32,7 +32,7 @@ private:
        std::vector<DirectX::XMFLOAT3> normals;  
        std::vector<DirectX::XMFLOAT2> texCoords;  
 
-       std::vector<float> vertexData;  
+       std::vector<Vertex> vertexData;  
        std::vector<uint32_t> indexData;  
 
        std::unordered_map<std::string, uint32_t> uniqueVertices;  
